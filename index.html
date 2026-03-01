@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Fire Insurance Simulator v3 — Retro fire insurance simulation with competitors, achievements, and more.">
+  <title>Fire Insurance Simulator</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+</head>
+
+<body>
+  <div class="toast-container" id="toast-container"></div>
+  <div class="particles-container" id="particles-container"></div>
+  <div class="crt-glitch" id="crt-glitch"></div>
+
+  <!-- ═══ TITLE SCREEN ═══ -->
+  <div class="screen active" id="title-screen">
+    <div style="text-align:center; z-index:2;">
+      <span class="title-fire">🔥</span>
+      <h1 class="title-name" style="font-size:2rem">FIRE<br>INSURANCE</h1>
+      <p class="title-sub">YANGIN SİGORTASI SİMÜLASYONU</p>
+
+      <div style="margin: 20px 0;">
+        <input type="text" id="company-name-input" class="retro-input" placeholder="ŞİRKETİNİZİN ADI..." maxlength="20"
+          autocomplete="off">
+      </div>
+
+      <div class="title-divider"></div>
+      <div class="title-prompt" id="start-btn">[ BAŞLAMAK İÇİN TIKLA ]</div>
+    </div>
+    <div class="title-info">FIRE INSURANCE SIMULATOR v5.0 — COMPETITION EDITION</div>
+  </div>
+
+  <!-- ═══ GAME SCREEN ═══ -->
+  <div class="screen" id="game-screen">
+    <div class="topbar">
+      <div class="topbar-brand" id="topbar-company-name"><span class="brand-icon">🔥</span> FIRE INSURANCE</div>
+      <div class="topbar-stats">
+        <div class="tb-stat"><span class="tb-stat-icon">📅</span>
+          <div class="tb-stat-info"><span class="tb-stat-label">AY</span><span class="tb-stat-value quarter"
+              id="stat-quarter">1/24</span></div>
+        </div>
+        <div class="tb-stat"><span class="tb-stat-icon">💰</span>
+          <div class="tb-stat-info"><span class="tb-stat-label">NAKİT</span><span class="tb-stat-value money"
+              id="stat-cash">$500,000</span></div>
+        </div>
+        <div class="tb-stat"><span class="tb-stat-icon">📊</span>
+          <div class="tb-stat-info"><span class="tb-stat-label">H.ORANI</span><span class="tb-stat-value"
+              id="stat-lr">0%</span></div>
+        </div>
+        <div class="tb-stat"><span class="tb-stat-icon">📋</span>
+          <div class="tb-stat-info"><span class="tb-stat-label">POLİÇE</span><span class="tb-stat-value"
+              id="stat-policies">0</span></div>
+        </div>
+        <div class="tb-stat" id="reins-stat" style="display:none"><span class="tb-stat-icon">🛡️</span>
+          <div class="tb-stat-info"><span class="tb-stat-label">REASÜRANS</span><span class="tb-stat-value"
+              id="stat-reins" style="color:var(--retro-cyan)">AKTİF</span></div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-retro btn-green" id="next-quarter-btn">⏩ SONRAKİ AY</button>
+      </div>
+    </div>
+
+    <!-- Mobile Tab Bar -->
+    <div class="mobile-tabs" id="mobile-tabs">
+      <button class="mobile-tab active" data-tab="clients">📋 Müşteriler</button>
+      <button class="mobile-tab" data-tab="decision">📊 Değerlendirme</button>
+      <button class="mobile-tab" data-tab="portfolio">💼 Portföy</button>
+      <button class="mobile-tab" data-tab="office">🏢 Şirket</button>
+    </div>
+
+    <!-- Desktop Tab Bar (Only visible on desktop/tablet, replaces the header names) -->
+    <div class="desktop-tabs" id="desktop-tabs">
+      <button class="desktop-tab active" data-tab="main">Ana Ekran</button>
+      <button class="desktop-tab" data-tab="office">Şirket Yönetimi</button>
+    </div>
+
+    <div class="game-views">
+      <!-- MAIN VIEW (The existing 3 panels) -->
+      <div class="game-layout active-view" id="view-main">
+        <!-- LEFT -->
+        <div class="client-panel" data-panel="clients">
+          <div class="panel-header">📋 MÜŞTERİLER <span class="header-count" id="client-count">0</span></div>
+          <div class="client-area" id="client-list">
+            <div class="no-clients">BAŞLAMAK İÇİN<br>⏩ SONRAKİ AY<br>BUTONUNA BASIN</div>
+          </div>
+        </div>
+
+        <!-- CENTER -->
+        <div class="decision-panel" data-panel="decision">
+          <div class="panel-header">📊 RİSK DEĞERLENDİRME</div>
+          <div class="decision-area" id="decision-area">
+            <div class="no-selection">
+              <div class="ns-icon">📂</div>
+              <div class="ns-text">SOLDAKİ LİSTEDEN<br>BİR MÜŞTERİ SEÇİN</div>
+            </div>
+          </div>
+          <div class="decision-buttons" id="decision-buttons" style="display:none">
+            <button class="btn-retro btn-green" id="btn-accept">✅ SİGORTALA</button>
+            <button class="btn-retro btn-red" id="btn-reject">❌ REDDET</button>
+          </div>
+          <!-- Negotiation Panel -->
+          <div class="negotiation-panel" id="negotiation-panel" style="display:none">
+            <div class="neg-header">💬 MÜZAKERE</div>
+            <div class="neg-info" id="neg-info"></div>
+            <div class="neg-offer" id="neg-offer"></div>
+            <div class="neg-buttons">
+              <button class="btn-retro btn-green" id="neg-accept">✅ Kabul Et</button>
+              <button class="btn-retro btn-amber" id="neg-counter">🔄 Karşı Teklif</button>
+              <button class="btn-retro btn-red" id="neg-reject">❌ Vazgeç</button>
+            </div>
+            <!-- Counter offer input (hidden by default) -->
+            <div class="neg-counter-input" id="neg-counter-input" style="display:none">
+              <div class="neg-slider-label">Senin teklifin: <span id="neg-player-offer">$0</span></div>
+              <input type="range" id="neg-slider" class="neg-slider" min="0" max="100" value="50">
+              <div class="neg-slider-range">
+                <span id="neg-range-low">$0</span>
+                <span id="neg-range-high">$0</span>
+              </div>
+              <button class="btn-retro btn-amber neg-submit-btn" id="neg-submit">📤 Teklifi Gönder</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="right-panel" data-panel="portfolio">
+          <div class="panel-header">💼 PORTFÖY</div>
+          <div class="portfolio-stats" id="portfolio-stats">
+            <div class="ps-item"><span class="ps-label">Toplam Prim</span><span class="ps-value"
+                id="ps-premium">$0</span>
+            </div>
+            <div class="ps-item"><span class="ps-label">Toplam Hasar</span><span class="ps-value negative"
+                id="ps-claims">$0</span></div>
+            <div class="ps-item"><span class="ps-label">Kâr / Zarar</span><span class="ps-value"
+                id="ps-profit">$0</span>
+            </div>
+            <div class="ps-item"><span class="ps-label">Aktif Poliçe</span><span class="ps-value amber"
+                id="ps-active">0</span></div>
+            <div class="ps-item"><span class="ps-label">Yangın</span><span class="ps-value negative"
+                id="ps-fires">0</span></div>
+          </div>
+          <div class="panel-header">📈 PERFORMANS</div>
+          <div class="chart-area"><canvas id="perf-chart"></canvas></div>
+          <div class="panel-header">🏆 BAŞARIMLAR</div>
+          <div class="achievements-bar" id="achievements-bar"></div>
+          <div class="panel-header">📜 GÜNLÜK</div>
+          <div class="event-section" id="event-log"></div>
+        </div> <!-- /right-panel -->
+      </div> <!-- /game-layout (view-main) -->
+
+      <!-- OFFICE VIEW -->
+      <div class="office-layout" id="view-office" style="display:none;">
+        <div class="office-panel" data-panel="office">
+          <div class="panel-header">🏢 ŞİRKET MERKEZİ & YATIRIMLAR</div>
+          <div class="office-area">
+            <p class="office-desc">Şirketinizi büyütmek ve rekabet avantajı sağlamak için departmanlara yatırım yapın.
+              Bu geliştirmeler kalıcıdır.</p>
+            <div class="upgrades-grid" id="upgrades-grid">
+              <!-- Upgrades will be inserted here by JS -->
+            </div>
+
+            <!-- AGENTS SECTION -->
+            <div class="panel-header" style="margin-top:16px;">🤝 AKTİF ACENTELER</div>
+            <p class="office-desc">Acenteleriniz her ay müşteri getirir ve primlerden komisyon alır.</p>
+            <div class="agents-grid" id="agents-grid">
+              <!-- Agent cards rendered by JS -->
+            </div>
+
+            <div class="panel-header" style="margin-top:16px;">📋 İŞE ALINACAK ACENTELER</div>
+            <p class="office-desc">Yeni acente işe alarak müşteri ağınızı genişletin. İşe alım: $10,000</p>
+            <div class="agent-hire-grid" id="agent-hire-grid">
+              <!-- Available agents rendered by JS -->
+            </div>
+
+            <!-- RISK ENGINEER SECTION -->
+            <div class="panel-header" style="margin-top:16px;">🔍 RİSK MÜHENDİSİ</div>
+            <p class="office-desc">Risk mühendisi olmadan müşterilerin risk faktörlerini göremezsiniz!</p>
+            <div class="engineer-section" id="engineer-section">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+      </div> <!-- /office-layout -->
+    </div> <!-- /game-views -->
+
+    <div class="news-ticker">
+      <div class="ticker-label">📰 HABER</div>
+      <div class="ticker-content"><span class="ticker-text" id="ticker-text">Risk Horizon Sigorta — Rakiplerinizi geride
+          bırakın!</span></div>
+    </div>
+  </div> <!-- /game-screen -->
+
+  <!-- ═══ FIRE MODAL ═══ -->
+  <div class="modal-overlay" id="fire-modal">
+    <div class="fire-modal">
+      <span class="fire-icon">🔥</span>
+      <h2 class="fire-title" id="fire-title">YANGIN!</h2>
+      <p class="fire-facility" id="fire-facility"></p>
+      <div class="fire-stats">
+        <div class="fire-stat">
+          <div class="fs-label">HASAR</div>
+          <div class="fs-value damage" id="fire-damage">$0</div>
+        </div>
+        <div class="fire-stat">
+          <div class="fs-label">TAZMİNAT</div>
+          <div class="fs-value claim" id="fire-claim">$0</div>
+        </div>
+      </div>
+      <button class="btn-retro btn-amber" id="fire-dismiss" style="width:100%;padding:10px">ANLADIM</button>
+    </div>
+  </div>
+
+  <!-- ═══ QUARTER REPORT MODAL ═══ -->
+  <div class="modal-overlay" id="quarter-modal">
+    <div class="quarter-modal">
+      <div class="qm-header">
+        <div class="qm-title" id="qm-title">📊 ÇEYREK DEĞERLENDİRMESİ</div>
+        <div class="qm-subtitle" id="qm-subtitle"></div>
+      </div>
+      <div class="qm-stats" id="qm-stats"></div>
+      <div id="qm-fires"></div>
+      <div class="leaderboard" id="qm-leaderboard"></div>
+      <button class="btn-retro btn-green" id="quarter-dismiss" style="width:100%;padding:10px">DEVAM ET</button>
+    </div>
+  </div>
+
+  <!-- ═══ GAME OVER ═══ -->
+  <div class="screen" id="gameover-screen">
+    <div class="go-content">
+      <div class="go-badge">★ SİMÜLASYON TAMAMLANDI ★</div>
+      <h2 class="go-title">SEZON SONU</h2>
+      <p class="go-subtitle" id="go-subtitle"></p>
+      <div class="go-grade" id="go-grade">A</div>
+      <div class="go-stats">
+        <div class="go-stat">
+          <div class="gos-value" id="gos-profit">$0</div>
+          <div class="gos-label">KÂR/ZARAR</div>
+        </div>
+        <div class="go-stat">
+          <div class="gos-value" id="gos-policies">0</div>
+          <div class="gos-label">POLİÇE</div>
+        </div>
+        <div class="go-stat">
+          <div class="gos-value" id="gos-fires">0</div>
+          <div class="gos-label">YANGIN</div>
+        </div>
+        <div class="go-stat">
+          <div class="gos-value" id="gos-ratio">0%</div>
+          <div class="gos-label">H.ORANI</div>
+        </div>
+      </div>
+      <div class="go-leaderboard" id="go-leaderboard"></div>
+      <button class="btn-retro btn-green" id="replay-btn" style="padding:10px 28px;font-size:.5rem">🔄 TEKRAR
+        OYNA</button>
+    </div>
+  </div>
+
+  <!-- ═══ FIRE MINI-GAME OVERLAY ═══ -->
+  <div class="mg-overlay" id="mg-overlay" style="display:none;">
+    <div class="mg-box">
+      <div class="mg-title" id="mg-title">🔥 YANGIN MÜDAHALESİ 🔥</div>
+      <div class="mg-desc">Su basıncını <span style="color:var(--crt-green)">YEŞİL ALANDA</span> tut! <br>Pompalamak
+        için <b>sürekli tıkla!</b></div>
+
+      <div class="mg-bar-container">
+        <div class="mg-target-zone" id="mg-target-zone"></div>
+        <div class="mg-indicator" id="mg-indicator"></div>
+      </div>
+
+      <div class="mg-timer">Kalan Süre: <span id="mg-time-left">5</span>00ms</div>
+      <button class="btn-retro btn-red mg-btn" id="mg-pump-btn">Pompala!</button>
+    </div>
+  </div>
+
+  <!-- ═══ FIRE MINI-GAME (WATER PRESSURE) ═══ -->
+  <div class="mg-overlay" id="mg-overlay" style="display:none;">
+    <div class="mg-box">
+      <div class="mg-title" id="mg-title">🔥 YANGIN MÜDAHALESİ 🔥</div>
+      <div class="mg-desc" id="mg-desc">Basıncı yeşil bölgede tut! Tıkla veya BOŞLUK tuşuna bas!</div>
+      <div class="mg-bar-container" id="mg-bar-container">
+        <div class="mg-target-zone" id="mg-target-zone"></div>
+        <div class="mg-indicator" id="mg-indicator"></div>
+      </div>
+      <div class="mg-time-left" id="mg-time-left">Kalan: 5.0s</div>
+      <button class="mg-btn btn-retro btn-red" id="mg-pump-btn">💦 SÖNDÜR!</button>
+    </div>
+  </div>
+
+  <!-- ═══ VISUAL NOVEL STORY OVERLAY ═══ -->
+  <div class="vn-overlay" id="vn-overlay" style="display:none;">
+    <div class="vn-dialog-box" id="vn-dialog-box">
+      <div class="vn-portrait-area">
+        <div class="vn-portrait" id="vn-portrait">👤</div>
+      </div>
+      <div class="vn-text-area">
+        <div class="vn-name-plate" id="vn-name">CEO</div>
+        <div class="vn-text" id="vn-text">...</div>
+        <div class="vn-continue-indicator" id="vn-continue">▼</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js?v=2"></script>
+</body>
+
+</html>
