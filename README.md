@@ -20,7 +20,6 @@ Oyunu tarayıcı üzerinden hemen oynamak için tıklayın:
 ### 🏢 Şirket ve Portföy Yönetimi
 - **Acente Sistemi**: Farklı becerilere ve uzmanlık alanlarına sahip acenteleri işe alın ve eğitin.
 - **Yatırımlar**: IT altyapısını geliştirin, satış ekibini eğitin ve şirket merkezinizi büyütün.
-- **Reasürans**: Büyük risklerde kendinizi koruma altına alın.
 
 ### 🏆 Rekabetçi Liderlik Tablosu
 - Diğer yapay zeka şirketleriyle (Risk Horizon, Quantum Shield vb.) kâr ve poliçe sayısında yarışın.
