@@ -6,9 +6,9 @@ Kullanıcıların yangın risklerine karşı stratejiler geliştirdiği, web tab
 Oyunu tarayıcı üzerinden hemen oynamak için tıklayın: [Fire Insurance Simulator](https://huseyinkaymak7-prog.github.io/fire-insurance-simulator/)
 
 ## 🎮 Özellikler
-* [1. Özellik: Örn. Dinamik yangın risk analizi]
-* [2. Özellik: Örn. Bütçe yönetimi ve poliçe seçimi]
-* [3. Özellik: Örn. Anlık geri bildirimler ve skor sistemi]
+* [1. Özellik: Dinamik yangın risk analizi]
+* [2. Özellik: Bütçe yönetimi ve poliçe seçimi]
+* [3. Özellik: Anlık geri bildirimler ve skor sistemi]
 
 ## 💻 Kullanılan Teknolojiler
 * **HTML5** - Oyun iskeleti ve arayüz
