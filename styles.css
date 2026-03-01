@@ -328,9 +328,12 @@ body::after {
   display: none;
   width: 100%;
   height: 100vh;
-  position: absolute;
+  height: 100dvh;
+  position: fixed;
   top: 0;
   left: 0;
+  z-index: 100;
+  background: var(--bg-dark);
 }
 
 .screen.active {
@@ -3363,11 +3366,17 @@ body::after {
 
   /* ── Game Screen layout ── */
   #game-screen {
+    display: none;
+    /* Hide by default */
     height: 100vh;
     height: 100dvh;
-    display: flex;
     flex-direction: column;
     overflow: hidden;
+  }
+
+  #game-screen.active {
+    display: flex;
+    /* Show only when active */
   }
 
   .game-views {
@@ -3375,7 +3384,8 @@ body::after {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding-bottom: 60px; /* Space for mobile-tabs */
+    padding-bottom: 60px;
+    /* Space for mobile-tabs */
   }
 
   /* ── Main 3-panel layout → single column ── */
@@ -3388,9 +3398,9 @@ body::after {
     background: var(--bg-dark);
   }
 
-  .game-layout > .client-panel,
-  .game-layout > .decision-panel,
-  .game-layout > .right-panel {
+  .game-layout>.client-panel,
+  .game-layout>.decision-panel,
+  .game-layout>.right-panel {
     display: none;
     width: 100% !important;
     height: 100%;
@@ -3399,9 +3409,9 @@ body::after {
     -webkit-overflow-scrolling: touch;
   }
 
-  .game-layout > .client-panel.mobile-active,
-  .game-layout > .decision-panel.mobile-active,
-  .game-layout > .right-panel.mobile-active {
+  .game-layout>.client-panel.mobile-active,
+  .game-layout>.decision-panel.mobile-active,
+  .game-layout>.right-panel.mobile-active {
     display: flex;
   }
 
@@ -3462,7 +3472,8 @@ body::after {
     padding: var(--sp-md);
   }
 
-  .fire-modal, .quarter-modal {
+  .fire-modal,
+  .quarter-modal {
     width: 95% !important;
     max-width: 400px;
     padding: var(--sp-lg) !important;
