@@ -1096,11 +1096,7 @@ class Game {
       mainView.classList.remove('active-view');
       if (officeView) {
         officeView.style.display = 'flex';
-        // Mobile: activate office layout
-        if (isMobile) {
-          const officeLay = officeView.querySelector('.office-layout');
-          if (officeLay) officeLay.classList.add('mobile-active');
-        }
+        officeView.classList.add('mobile-active');
       }
       this.ui.renderUpgrades();
     } else {
@@ -1108,8 +1104,7 @@ class Game {
       mainView.style.display = isMobile ? 'flex' : 'grid';
       if (officeView) {
         officeView.style.display = 'none';
-        const officeLay = officeView.querySelector('.office-layout');
-        if (officeLay) officeLay.classList.remove('mobile-active');
+        officeView.classList.remove('mobile-active');
       }
     }
 

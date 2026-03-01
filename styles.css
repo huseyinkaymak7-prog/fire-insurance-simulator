@@ -3416,15 +3416,16 @@ body::after {
   }
 
   /* Office view */
-  .office-layout {
-    display: none !important;
+  #view-office {
+    display: none;
     flex: 1;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
     padding: var(--sp-md);
+    background: var(--bg-dark);
   }
 
-  .office-layout.mobile-active {
+  #view-office.mobile-active {
     display: flex !important;
   }
 
