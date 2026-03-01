@@ -2411,31 +2411,7 @@ body::after {
 
 /* END 900px MEDIA QUERY */
 
-/* ════════════════════════════ PORTRAIT TO LANDSCAPE FORCER ════════════════════════════ */
-@media screen and (max-width: 900px) and (orientation: portrait) {
-  html {
-    font-size: 18px;
-    /* Scales everything UP for rotated view */
-  }
-
-  body {
-    transform: rotate(90deg);
-    transform-origin: bottom left;
-    position: absolute;
-    top: -100vw;
-    left: 0;
-    height: 100vw;
-    width: 100vh;
-    overflow: hidden;
-  }
-
-  #title-screen {
-    justify-content: flex-start;
-    padding-top: var(--sp-xl);
-    padding-bottom: var(--sp-xl);
-    overflow-y: auto;
-  }
-}
+/* FORCED LANDSCAPE REMOVED */
 
 /* ════════════════════════════ LANDSCAPE NATIVE MOBILE ════════════════════════════ */
 @media screen and (max-width: 900px) and (orientation: landscape) {
@@ -3274,10 +3250,10 @@ body::after {
   }
 
   body {
-    overflow: auto;
-    height: auto;
-    min-height: 100vh;
-    min-height: 100dvh;
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+    width: 100vw;
   }
 
   /* Hide desktop tabs, show mobile tabs */
@@ -3295,13 +3271,15 @@ body::after {
     background: var(--bg-panel);
     border-top: 2px solid var(--border-pixel);
     padding: var(--sp-xs) 0;
+    padding-bottom: env(safe-area-inset-bottom);
     gap: 0;
+    height: 60px;
   }
 
   .mobile-tab {
     flex: 1;
     font-family: var(--font-pixel);
-    font-size: 0.32rem;
+    font-size: 0.35rem;
     color: var(--text-muted);
     background: transparent;
     border: none;
@@ -3310,11 +3288,17 @@ body::after {
     text-align: center;
     transition: color 0.15s;
     line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
   }
 
   .mobile-tab.active {
     color: var(--crt-green);
     text-shadow: 0 0 6px var(--crt-green-glow);
+    background: rgba(255, 255, 255, 0.03);
   }
 
   /* ── Topbar ── */
@@ -3322,175 +3306,191 @@ body::after {
     flex-wrap: wrap;
     padding: var(--sp-xs) var(--sp-sm);
     gap: var(--sp-xs);
+    height: auto;
+    min-height: 44px;
+    flex-shrink: 0;
   }
 
   .topbar-brand {
-    font-size: 0.45rem !important;
+    font-size: 0.5rem !important;
     width: 100%;
     text-align: center;
-    padding-bottom: var(--sp-xs);
+    padding-bottom: 2px;
     border-bottom: 1px solid var(--border-pixel);
-    margin-bottom: var(--sp-xs);
+    margin-bottom: 2px;
   }
 
   .topbar-stats {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--sp-xs);
+    gap: 4px;
     width: 100%;
   }
 
   .tb-stat {
-    padding: var(--sp-xs) !important;
-    gap: var(--sp-xs) !important;
+    padding: 2px !important;
+    gap: 4px !important;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-pixel);
+  }
+
+  .tb-stat-info {
+    display: flex;
+    flex-direction: column;
   }
 
   .tb-stat-label {
-    font-size: 0.3rem !important;
+    font-size: 0.32rem !important;
   }
 
   .tb-stat-value {
-    font-size: 0.42rem !important;
+    font-size: 0.45rem !important;
   }
 
   .topbar-actions {
     width: 100%;
     justify-content: center;
-    padding-top: var(--sp-xs);
+    padding-top: 2px;
+    padding-bottom: 4px;
   }
 
   .topbar-actions .btn-retro {
     flex: 1;
     text-align: center;
-    font-size: 0.38rem;
-    padding: var(--sp-sm) var(--sp-md);
+    font-size: 0.45rem;
+    padding: 8px;
   }
 
   /* ── Game Screen layout ── */
   #game-screen {
-    height: auto;
-    min-height: 100vh;
-    min-height: 100dvh;
-    padding-bottom: 52px;
-    /* Space for mobile-tabs */
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
   .game-views {
+    flex: 1;
+    display: flex;
     flex-direction: column;
-    overflow: visible;
+    overflow: hidden;
+    padding-bottom: 60px; /* Space for mobile-tabs */
   }
 
   /* ── Main 3-panel layout → single column ── */
   .game-layout {
     display: flex;
+    flex: 1;
     flex-direction: column;
     gap: 0;
-    overflow: visible;
+    overflow: hidden;
+    background: var(--bg-dark);
   }
 
-  .game-layout>.client-panel,
-  .game-layout>.decision-panel,
-  .game-layout>.right-panel {
+  .game-layout > .client-panel,
+  .game-layout > .decision-panel,
+  .game-layout > .right-panel {
     display: none;
     width: 100% !important;
-    min-height: 60vh;
-    overflow: auto;
+    height: 100%;
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .game-layout>.client-panel.mobile-active,
-  .game-layout>.decision-panel.mobile-active,
-  .game-layout>.right-panel.mobile-active {
+  .game-layout > .client-panel.mobile-active,
+  .game-layout > .decision-panel.mobile-active,
+  .game-layout > .right-panel.mobile-active {
     display: flex;
-    flex-direction: column;
   }
 
-  /* Office view also hidden by default on mobile */
+  /* Office view */
   .office-layout {
     display: none !important;
-    flex-direction: column !important;
-    overflow: auto !important;
-    min-height: 60vh;
+    flex: 1;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    padding: var(--sp-md);
   }
 
   .office-layout.mobile-active {
     display: flex !important;
   }
 
-  /* Office panels stack vertically */
-  .office-layout>* {
-    width: 100% !important;
-    max-width: 100% !important;
+  .office-area {
+    padding: var(--sp-md);
+  }
+
+  .office-desc {
+    font-size: 1rem;
+    margin-bottom: var(--sp-lg);
   }
 
   /* ── Client list ── */
   .client-area {
-    max-height: none;
-    overflow: visible;
-  }
-
-  .client-card {
     padding: var(--sp-sm);
   }
 
   /* ── Decision area ── */
   .decision-area {
-    overflow: auto;
-    max-height: none;
+    flex: 1;
+    padding: var(--sp-sm);
   }
 
   .decision-buttons {
     position: sticky;
     bottom: 0;
-    background: var(--bg-main);
-    padding: var(--sp-sm);
+    background: var(--bg-panel);
+    padding: var(--sp-md);
     border-top: 2px solid var(--border-pixel);
-    z-index: 10;
-  }
-
-  /* ── Negotiation panel ── */
-  .neg-buttons {
-    flex-direction: column;
-    gap: var(--sp-xs);
-  }
-
-  /* ── Premium buttons ── */
-  .premium-options {
-    flex-direction: column;
-    gap: var(--sp-xs);
-  }
-
-  .premium-btn {
-    width: 100%;
+    z-index: 100;
   }
 
   /* ── Right panel / Portfolio ── */
-  .right-panel {
-    overflow: auto;
-    max-height: none;
+  .ps-item {
+    padding: 4px 0;
   }
 
   .chart-area {
-    height: 160px;
+    height: 140px;
+    flex-shrink: 0;
   }
 
-  /* ── Fire modal ── */
-  .fire-modal {
-    width: 92% !important;
-    max-width: 400px;
-    padding: var(--sp-lg) !important;
-  }
-
-  /* ── VN overlay ── */
-  .story-overlay .story-box {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  /* ── Modals ── */
+  .modal-overlay {
     padding: var(--sp-md);
   }
 
-  .story-overlay .story-portrait {
-    width: 80px;
-    height: 80px;
+  .fire-modal, .quarter-modal {
+    width: 95% !important;
+    max-width: 400px;
+    padding: var(--sp-lg) !important;
+    max-height: 90vh;
+  }
+
+  /* ── Title screen ── */
+  #title-screen {
+    padding: var(--sp-xl);
+    text-align: center;
+  }
+
+  .title-name {
+    font-size: 1.5rem !important;
+  }
+
+  .title-fire {
+    font-size: 3rem !important;
+  }
+
+  .retro-input {
+    width: 100% !important;
+    max-width: 280px;
+    font-size: 0.6rem !important;
+  }
+
+  .title-prompt {
+    font-size: 0.7rem;
   }
 
   /* ── News ticker ── */
@@ -3498,33 +3498,34 @@ body::after {
     display: none;
   }
 
-  /* ── Title screen ── */
-  .title-name {
-    font-size: 1.2rem !important;
+  /* ── VN overlay ── */
+  .vn-dialog-box {
+    width: 95%;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--sp-sm);
+    padding: var(--sp-md);
   }
 
-  .title-fire {
-    font-size: 2.5rem !important;
+  .vn-portrait-area {
+    width: 80px;
+    height: 80px;
   }
 
-  .retro-input {
-    width: 90% !important;
-    font-size: 0.5rem !important;
+  .vn-portrait {
+    font-size: 2.5rem;
   }
 
-  /* ── Leaderboard ── */
-  .leaderboard-grid {
-    font-size: 0.35rem;
+  .vn-name-plate {
+    position: static;
+    display: inline-block;
+    margin-bottom: 4px;
   }
 
-  /* ── Agents grid ── */
-  .agent-hire-grid,
-  .eng-hire-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* ── CRT overlay lighter on mobile for performance ── */
-  body::before {
-    background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.08) 0px, rgba(0, 0, 0, 0.08) 1px, transparent 1px, transparent 3px);
+  .vn-text {
+    margin-top: 4px;
+    min-height: 60px;
+    font-size: 0.4rem;
   }
 }
