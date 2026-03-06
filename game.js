@@ -625,24 +625,35 @@ class UIRenderer {
       factorsHtml = `<div class="eng-locked-banner">
         <div class="elb-icon">🔒</div>
         <div class="elb-text">RİSK MÜHENDİSİ GEREKLİ</div>
-        <div class="elb-desc">Şirket Yönetimi'nden risk mühendisi işe alın.</div>
+        <div class="elb-desc" style="margin-bottom:12px;">Şirket Yönetimi'nden risk mühendisi işe alın.</div>
+        <button class="btn-retro btn-amber" id="btn-hire-engineer" style="font-size: 0.5rem; padding: 8px 16px;">Hemen İşe Al</button>
       </div>`;
     } else {
       const showRecs = engSkill >= 4;
-      factorsHtml = cl.factors.map((f, i) => {
+      let visibleHtml = '';
+      let lockedHtml = '';
+      let lockedCount = 0;
+
+      cl.factors.forEach((f, i) => {
         if (i >= visibleCount) {
-          return `<div class="report-risk-item locked-factor"><span class="rri-icon">🔒</span><span class="rri-name">${f.name}</span><span class="rri-status">KİLİTLİ</span></div>`;
-        }
-        let html = `<div class="report-risk-item"><span class="rri-icon">${f.icon}</span><span class="rri-name">${f.name}</span><span class="rri-status ${f.status}">${f.statusText}</span></div>`;
-        if (showRecs && f.status !== 'good') {
-          const rec = RECOMMENDATIONS.find(r => r.id === f.id);
-          if (rec) {
-            const on = cl.selectedRecs.includes(rec.id);
-            html += `<div class="rec-item embedded-rec" data-rec="${rec.id}"><span class="rec-icon">⚙️</span><div class="rec-info"><div class="rec-name">Öneri: ${rec.name}</div><div class="rec-effect">Risk -${rec.reduction} | Kabul %${Math.round(rec.chance * 100)}</div></div><span class="rec-cost">${fmtMoney(rec.cost)}</span><div class="rec-toggle ${on ? 'active' : ''}" data-rt="${rec.id}"></div></div>`;
+          lockedCount++;
+          lockedHtml += `<div class="report-risk-item locked-factor"><span class="rri-icon">🔒</span><span class="rri-name">${f.name}</span><span class="rri-status">KİLİTLİ</span></div>`;
+        } else {
+          let html = `<div class="report-risk-item"><span class="rri-icon">${f.icon}</span><span class="rri-name">${f.name}</span><span class="rri-status ${f.status}">${f.statusText}</span></div>`;
+          if (showRecs && f.status !== 'good') {
+            const rec = RECOMMENDATIONS.find(r => r.id === f.id);
+            if (rec) {
+              const on = cl.selectedRecs.includes(rec.id);
+              html += `<div class="rec-item embedded-rec" data-rec="${rec.id}"><span class="rec-icon">⚙️</span><div class="rec-info"><div class="rec-name">Öneri: ${rec.name}</div><div class="rec-effect">Risk -${rec.reduction}</div></div><span class="rec-cost">${fmtMoney(rec.cost)}</span><div class="rec-toggle ${on ? 'active' : ''}" data-rt="${rec.id}"></div></div>`;
+            }
           }
+          visibleHtml += html;
         }
-        return html;
-      }).join('');
+      });
+      factorsHtml = visibleHtml;
+      if (lockedCount > 0) {
+        factorsHtml += `<details class="locked-factors-details"><summary>🔒 ${lockedCount} Gizli Faktör (Eğitim Gerekli)</summary><div class="locked-factors-content">${lockedHtml}</div></details>`;
+      }
     }
 
     const factorTitle = hasEngineer
@@ -671,6 +682,15 @@ class UIRenderer {
       if (idx >= 0) { cl.selectedRecs.splice(idx, 1); t.classList.remove('active'); } else { cl.selectedRecs.push(id); t.classList.add('active'); }
       this.game.sound.play('click');
     }));
+
+    // Wire up Hemen İşe Al button
+    const btnHireEngineer = document.getElementById('btn-hire-engineer');
+    if (btnHireEngineer) {
+      btnHireEngineer.addEventListener('click', () => {
+        this.game.sound.play('click');
+        this.game.switchTab('office');
+      });
+    }
     btns.style.display = 'flex';
   }
 
@@ -983,6 +1003,8 @@ class StoryManager {
     document.getElementById('vn-continue').style.display = 'none';
 
     const d = this.queue.shift();
+    // Execute per-step action callback (e.g. tab switching during tutorial)
+    if (d.action) d.action();
     const portEl = document.getElementById('vn-portrait');
     if (d.portrait && d.portrait.includes('.png')) {
       // Direct pixel art rendering over transparent background
@@ -1152,14 +1174,55 @@ class Game {
     // Reset flags
     this.flags = { seenIntro: false, seenFirstFire: false, seenMidpoint: false, usedCredit: false };
 
-    // Trigger Intro Story LAST so it appears on top and pauses interaction
+    // ── Interactive Onboarding Tutorial ──
+    const self = this;
+    const ceo = { name: 'Aylin (CEO)', portrait: 'assets/ceo_aylin.png' };
+    const clearHighlights = () => document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
+    const highlightEl = (id) => { clearHighlights(); const el = document.getElementById(id); if (el) el.classList.add('tutorial-highlight'); };
+
     setTimeout(() => {
       this.story.playSequence([
-        { name: 'Aylin (CEO)', portrait: 'assets/ceo_aylin.png', text: `${this.state.companyName} çatısı altına hoş geldin. Yangın sigortası piyasasında en dipten başlıyoruz. Rakiplerimiz dev gibi, biz ise sadece küçük bir ofisiz.` },
-        { name: 'Aylin (CEO)', portrait: 'assets/ceo_aylin.png', text: 'Bütçemiz kısıtlı. Doğru müşterileri seçmeli, riskleri iyi yönetmeli ve şirketi büyütmelisin. Yoksa batarız.' },
-        { name: 'Kerem (Güven Sigorta)', portrait: 'assets/kerem.png', text: 'Yeni yetmeler... Bu piyasada ayakta kalabileceğinizi mi sanıyorsunuz? İlk yangında iflas edeceksiniz.' },
-        { name: 'Aylin (CEO)', portrait: 'assets/ceo_aylin.png', text: 'Onları dinleme. Listede bizi bekleyen ilk başvurular var. Dikkatli karar ver!' }
+        // Step 1: Welcome
+        {
+          ...ceo, text: `${this.state.companyName} çatısı altına hoş geldin! Yangın sigortası piyasasında en dipten başlıyoruz. Rakiplerimiz dev gibi, biz ise sadece küçük bir ofisiz.`,
+          action: () => { self.switchTab('clients'); }
+        },
+        // Step 2: Quick overview intro
+        {
+          ...ceo, text: 'Hadi sana kısaca oyunu anlatayım. Şu an Müşteriler sekmesindeyiz. Sigorta yaptırmak isteyen firmalar buraya başvuruyor. Birine tıklayarak detaylarını görebilirsin.',
+          action: () => { self.switchTab('clients'); highlightEl('client-list'); }
+        },
+        // Step 3: Decision Tab
+        {
+          ...ceo, text: 'Bir müşteriye tıkladığında Değerlendirme sekmesi açılıyor. Orada risk raporu, yangın ihtimali ve prim seviyesini göreceksin. Kabul mü, ret mi — kararı sen vereceksin.',
+          action: () => { self.switchTab('decision'); highlightEl('decision-area'); }
+        },
+        // Step 4: Portfolio Tab
+        {
+          ...ceo, text: 'Portföy sekmesinde kabul ettiğin poliçeleri, toplam geliri ve hasar oranını takip edebilirsin. Şirketin mali durumu hep gözünün önünde olsun.',
+          action: () => { self.switchTab('portfolio'); highlightEl('right-panel'); }
+        },
+        // Step 5: Office Tab
+        {
+          ...ceo, text: 'Şirket Yönetimi sekmesi en kritik yer. Yatırımlar, acente işe alma ve en önemlisi Risk Mühendisi burada. Mühendis olmadan riskleri göremezsin, bunu unutma!',
+          action: () => { self.switchTab('office'); highlightEl('office-area'); }
+        },
+        // Step 6: Rival taunt
+        {
+          name: 'Kerem (Güven Sigorta)', portrait: 'assets/kerem.png', text: 'Yeni yetmeler... Bu piyasada ayakta kalabileceğinizi mi sanıyorsunuz? İlk yangında iflas edeceksiniz.',
+          action: () => { clearHighlights(); }
+        },
+        // Step 7: Back to office for engineer
+        {
+          ...ceo, text: 'Onları dinleme! İlk iş olarak buradan bir Risk Mühendisi işe al, sonra Müşteriler sekmesine dönüp başvuruları incele. Haydi başlayalım! 🔥',
+          action: () => { self.switchTab('office'); highlightEl('engineer-section'); }
+        }
       ]);
+      this.story.onClose = () => {
+        clearHighlights();
+        self.switchTab('clients');
+        this.story.onClose = null;
+      };
     }, 500);
   }
 

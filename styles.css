@@ -62,7 +62,7 @@
 }
 
 html {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 body {
@@ -350,7 +350,7 @@ body::after {
 }
 
 .title-fire {
-  font-size: 3.5rem;
+  font-size: 4.5rem;
   display: block;
   margin-bottom: var(--sp-md);
   animation: float 2s ease-in-out infinite;
@@ -985,6 +985,44 @@ body::after {
   font-size: 1rem;
 }
 
+.report-risk-item.locked-factor {
+  border-color: var(--border-pixel);
+  background: var(--bg-main);
+  opacity: .7;
+}
+
+.locked-factors-details {
+  margin-top: var(--sp-sm);
+  background: var(--bg-main);
+  border: 1px dashed var(--border-pixel);
+  padding: 4px;
+}
+
+.locked-factors-details summary {
+  font-family: var(--font-pixel);
+  font-size: .35rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: var(--sp-sm);
+  outline: none;
+  list-style-type: none;
+}
+
+.locked-factors-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.locked-factors-details[open] summary {
+  color: var(--retro-amber);
+  border-bottom: 1px solid var(--border-pixel);
+  margin-bottom: var(--sp-sm);
+}
+
+.locked-factors-content {
+  display: flex;
+  flex-direction: column;
+}
+
 .rri-icon {
   font-size: 1rem;
   width: 18px;
@@ -1000,6 +1038,37 @@ body::after {
   font-family: var(--font-pixel);
   font-size: .32rem;
   padding: 2px 5px;
+}
+
+.eng-locked-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--sp-lg);
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px dashed var(--retro-red);
+  margin-top: var(--sp-md);
+  margin-bottom: var(--sp-md);
+}
+
+.elb-icon {
+  font-size: 2rem;
+  margin-bottom: var(--sp-sm);
+  animation: pulseRed 2s infinite;
+}
+
+.elb-text {
+  font-family: var(--font-pixel);
+  font-size: .45rem;
+  color: var(--retro-red);
+  margin-bottom: var(--sp-xs);
+}
+
+.elb-desc {
+  font-size: .9rem;
+  color: var(--text-muted);
 }
 
 .rri-status.good {
@@ -1517,7 +1586,7 @@ body::after {
 
 .fire-title {
   font-family: var(--font-pixel);
-  font-size: .8rem;
+  font-size: 1rem;
   color: var(--retro-red);
   margin-bottom: var(--sp-sm);
   animation: fireGlow 1.5s infinite;
@@ -1545,7 +1614,7 @@ body::after {
 
 .fire-stat .fs-label {
   font-family: var(--font-pixel);
-  font-size: .3rem;
+  font-size: .45rem;
   color: var(--text-muted);
   letter-spacing: 1px;
 }
@@ -1584,7 +1653,7 @@ body::after {
 
 .qm-title {
   font-family: var(--font-pixel);
-  font-size: .55rem;
+  font-size: .75rem;
   color: var(--retro-amber);
   margin-bottom: var(--sp-sm);
   letter-spacing: 2px;
@@ -2186,16 +2255,43 @@ body::after {
   }
 
   .premium-options {
-    flex-direction: column;
+    flex-direction: row;
     gap: var(--sp-xs);
   }
 
   .premium-btn {
-    padding: var(--sp-md);
+    padding: var(--sp-sm);
+  }
+
+  .premium-btn .pb-label {
+    font-size: .35rem;
   }
 
   .premium-btn .pb-amount {
-    font-size: .45rem;
+    font-size: .4rem;
+  }
+
+  /* Horizontal swipeable carousels for Office tab */
+  .upgrades-grid,
+  .agents-grid,
+  .agent-hire-grid,
+  .eng-hire-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: var(--sp-md);
+    gap: var(--sp-md);
+  }
+
+  .ug-card,
+  .agent-card,
+  .eng-card {
+    min-width: 260px;
+    max-width: 280px;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
   }
 
   .rec-item {
@@ -3249,7 +3345,7 @@ body::after {
 @media (max-width: 768px) {
 
   html {
-    font-size: 13px;
+    font-size: 15px;
   }
 
   body {
@@ -3282,7 +3378,7 @@ body::after {
   .mobile-tab {
     flex: 1;
     font-family: var(--font-pixel);
-    font-size: 0.35rem;
+    font-size: 0.45rem;
     color: var(--text-muted);
     background: transparent;
     border: none;
@@ -3315,7 +3411,7 @@ body::after {
   }
 
   .topbar-brand {
-    font-size: 0.5rem !important;
+    font-size: 0.65rem !important;
     width: 100%;
     text-align: center;
     padding-bottom: 2px;
@@ -3343,11 +3439,11 @@ body::after {
   }
 
   .tb-stat-label {
-    font-size: 0.32rem !important;
+    font-size: 0.45rem !important;
   }
 
   .tb-stat-value {
-    font-size: 0.45rem !important;
+    font-size: 0.55rem !important;
   }
 
   .topbar-actions {
@@ -3540,4 +3636,50 @@ body::after {
     min-height: 60px;
     font-size: 0.4rem;
   }
+}
+
+/* ════════════ MOBILE OVERRIDES FOR GRIDS ════════════ */
+@media (max-width: 768px) {
+
+  .upgrades-grid,
+  .agents-grid,
+  .agent-hire-grid,
+  .eng-hire-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    padding-bottom: var(--sp-md) !important;
+    gap: var(--sp-md) !important;
+  }
+
+  .ug-card,
+  .agent-card,
+  .eng-card {
+    min-width: 260px !important;
+    max-width: 280px !important;
+    flex: 0 0 auto !important;
+    scroll-snap-align: start;
+  }
+}
+
+/* ════════════ TUTORIAL HIGHLIGHT ════════════ */
+@keyframes tutorial-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 15px 3px rgba(255, 204, 0, 0.35);
+  }
+
+  50% {
+    box-shadow: 0 0 25px 8px rgba(255, 204, 0, 0.55);
+  }
+}
+
+.tutorial-highlight {
+  border: 2px solid var(--retro-amber) !important;
+  animation: tutorial-pulse 1.5s ease-in-out infinite;
+  position: relative;
+  z-index: 10;
 }
